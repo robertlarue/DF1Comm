@@ -2307,7 +2307,7 @@ Public Class DF1Comm
     '*******************************
     '* Table for calculating CRC
     '*******************************
-    Private aCRC16Table() As UInt16 = {&H0, &HC0C1, &HC181, &H140, &HC301, &H3C0, &H280, &HC241,
+    Private ReadOnly aCRC16Table() As UInt16 = {&H0, &HC0C1, &HC181, &H140, &HC301, &H3C0, &H280, &HC241,
         &HC601, &H6C0, &H780, &HC741, &H500, &HC5C1, &HC481, &H440,
         &HCC01, &HCC0, &HD80, &HCD41, &HF00, &HCFC1, &HCE81, &HE40,
         &HA00, &HCAC1, &HCB81, &HB40, &HC901, &H9C0, &H880, &HC841,
@@ -2761,7 +2761,7 @@ Public Class DF1Comm
             'SerialPort.WriteBufferSize = 2048
             Dim blocklimit As Integer = 16384
             Dim readBuffer As Byte() = New Byte(blocklimit - 1) {}
-            Dim kickoffRead As Action = Nothing
+            Dim kickoffRead As Action(Of Object) = Nothing
 
             '            Byte[] buffer = New Byte[blocklimit];
             'Action kickoffRead = null;
@@ -2780,7 +2780,7 @@ Public Class DF1Comm
             '    }, null);
             '};
             'kickoffRead();
-            kickoffRead = Sub() SerialPort.BaseStream.BeginRead(readBuffer, 0, readBuffer.Length,
+            kickoffRead = Sub(obj As Object) SerialPort.BaseStream.BeginRead(readBuffer, 0, readBuffer.Length,
                 Sub(ar As IAsyncResult)
                     Try
                         Dim actualLength As Integer = 1
@@ -2788,14 +2788,14 @@ Public Class DF1Comm
                             Try
                                 actualLength = SerialPort.BaseStream.EndRead(ar)
                             Catch exc As System.InvalidOperationException
-                                Console.WriteLine("Serial DF1 Error: " & exc.Message)
+                                Debug.WriteLine("Serial DF1 Error: " & exc.Message)
                                 If SerialPort.IsOpen Then
                                     SerialPort.DiscardInBuffer()
                                     CloseComms()
                                 End If
                                 Return
                             Catch exc As System.ArgumentException
-                                Console.WriteLine("Serial DF1 Error: " & exc.Message)
+                                Debug.WriteLine("Serial DF1 Error: " & exc.Message)
                                 If SerialPort.IsOpen Then
                                     SerialPort.DiscardInBuffer()
                                     CloseComms()
@@ -2811,22 +2811,22 @@ Public Class DF1Comm
                         'Throw New DF1Exception("Failed To Read " & SerialPort.PortName & ". " & exc.Message)
                         'Catch exc As System.InvalidOperationException
                         '    Throw New DF1Exception(SerialPort.PortName & " is not open. " & exc.Message)
-                        Console.WriteLine("Serial DF1 Error: " & exc.Message)
+                        Debug.WriteLine("Serial DF1 Error: " & exc.Message)
                     End Try
-                    If SerialPort.IsOpen Then kickoffRead()
+                    If SerialPort.IsOpen Then kickoffRead(Nothing)
 
                 End Sub, Nothing)
 
             Try
                 SerialPort.Open()
                 SerialPort.DiscardInBuffer()
-                kickoffRead()
+                kickoffRead(Nothing)
                 If Protocol <> "DF1" Then
                     SerialPort.DtrEnable = True
                     SerialPort.RtsEnable = False
                 End If
             Catch ex As Exception
-                Console.WriteLine("Failed To Open " & SerialPort.PortName & ". " & ex.Message)
+                Throw New DF1Exception("Failed To Open " & SerialPort.PortName & ". " & ex.Message)
             End Try
 
         End If
@@ -2858,7 +2858,7 @@ Public Class DF1Comm
     Private NotAcknowledged As Boolean
     Private AckWaitTicks As Integer
     Private ACKed(255) As Boolean
-    Private MaxSendRetries As Integer = 2
+    Private ReadOnly MaxSendRetries As Integer = 2
 
     Private Function SendData(ByVal data() As Byte) As Integer
         '* A USB converer may need this

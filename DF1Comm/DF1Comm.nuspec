@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>DF1Comm</id>
+    <version>3.0.0</version>
+    <title>DF1Comm</title>
+    <authors>robertlarue</authors>
+    <owners>robertlarue</owners>
+    <licenseUrl>https://licenses.nuget.org/GPL-2.0-only</licenseUrl>
+    <projectUrl>https://github.com/robertlarue/DF1Comm</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/robertlarue/DF1Comm/master/DF1Comm.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>DF1 Data Link Layer and Application Layer</description>
+    <releaseNotes>Initial release of NuGet package</releaseNotes>
+    <copyright>Copyright 2006 Archie Jacobs</copyright>
+    <tags>DF1 PLC Allen-Bradley Rockwell ABDF1</tags>
+    <dependencies>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\DF1Comm.dll" target="lib\net20\DF1Comm.dll"/>
+    <file src="bin\Release\DF1Comm.pdb" target="lib\net20\DF1Comm.pdb"/>
+    <file src="bin\Release\DF1Comm.xml" target="lib\net20\DF1Comm.xml"/>
+  </files>
+</package>
