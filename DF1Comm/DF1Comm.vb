@@ -53,6 +53,7 @@
 '**********************************************************************************************
 Imports System.ComponentModel.Design
 Imports System.IO.Ports
+Imports System.Text
 Imports System.Text.RegularExpressions
 '<Assembly: system.Security.Permissions.SecurityPermissionAttribute(system.Security.Permissions.SecurityAction.Demand)> 
 <Assembly: CLSCompliant(True)>
@@ -1237,9 +1238,9 @@ Public Class DF1Comm
                     Dim j As Integer = 2
                     '* Stop concatenation if a zero (NULL) is reached
                     While j < StringLength + 2 And ReturnedData((i * 84) + j + 1) > 0
-                        result2.Append(CStr(ReturnedData((i * 84) + j + 1)))
+                        result2.Append(Encoding.ASCII.GetString(New Byte() {ReturnedData((i * 84) + j + 1)}))
                         '* Prevent an odd length string from getting a Null added on
-                        If j < StringLength + 1 And (ReturnedData((i * 84) + j)) > 0 Then result2.Append(CStr(ReturnedData((i * 84) + j)))
+                        If j < StringLength + 1 And (ReturnedData((i * 84) + j)) > 0 Then result2.Append(Encoding.ASCII.GetString(New Byte() {ReturnedData((i * 84) + j)}))
                         j += 2
                     End While
                     result(i) = result2.ToString
@@ -1621,8 +1622,8 @@ Public Class DF1Comm
         ConvertedData(0) = dataToWrite.Length - 1
         Dim i As Integer = 2
         While i <= dataToWrite.Length
-            ConvertedData(i + 1) = CByte(dataToWrite.Substring(i - 2, 1))
-            ConvertedData(i) = CByte(dataToWrite.Substring(i - 1, 1))
+            ConvertedData(i + 1) = Encoding.ASCII.GetBytes(dataToWrite.Substring(i - 2, 1))(0)
+            ConvertedData(i) = Encoding.ASCII.GetBytes(dataToWrite.Substring(i - 1, 1))(0)
             i += 2
         End While
         'Array.Copy(System.Text.Encoding.Default.GetBytes(dataToWrite), 0, ConvertedData, 2, dataToWrite.Length)
