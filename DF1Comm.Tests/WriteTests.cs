@@ -6,7 +6,7 @@ namespace DF1Comm.Tests
     [TestClass]
     public class WriteTests
     {
-        [TestMethod]
+        //[TestMethod]
         //public void WriteData_String()
         //{
         //    //Arrange
